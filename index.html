@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>"> CODE GEN"</title>
+  <link rel="icon" href="https://files.softicons.com/download/system-icons/rounded-square-icons-by-deleket/ico/Win-Command-Prompt.ico" type="image/x-icon">
+  <style>
+    body {
+      background-color: black;
+      color: yellow;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #app {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    #banner {
+      font-size: 14px;
+      margin-bottom: 20px;
+      color: yellow;
+      white-space: pre-wrap;
+      font-weight: bold;
+    }
+
+    #prompt {
+      display: inline;
+      margin-right: 10px;
+      font-size: 18px;
+    }
+
+    input {
+      background-color: black;
+      border: 1px solid yellow;
+      color: yellow;
+      font-family: monospace;
+      width: 200px;
+      padding: 5px;
+      margin-top: 10px;
+    }
+
+    #output {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      height: 400px;
+      width: 100%;
+      overflow-y: auto;
+      border-top: 1px solid yellow;
+      padding-top: 10px;
+      scrollbar-width: thin;
+      scrollbar-color: transparent transparent;
+    }
+
+    #output::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    #output::-webkit-scrollbar-thumb {
+      background-color: transparent;
+    }
+
+    .status-text {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 14px;
+      color: yellow;
+    }
+
+    #warning {
+      position: absolute;
+      top: 40px;
+      right: 20px;
+      font-size: 12px;
+      color: yellow;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <pre id="banner">
+  <strong>_____________________________________
+ | __/ _ \| _ \_   _| \| |_ _|_   _| __|    
+ | _| (_) |   / | | | .` || |  | | | _|     
+ |_|_\___/|_|_\ |_| |_|\_|___|_|_| |___|___ 
+  / __| __| \| | __| _ \  /_\_   _/ _ \| _ \
+ | (_ | _|| .` | _||   / / _ \| || (_) |   /
+  \___|___|_|\_|___|_|_\/_/ \_\_| \___/|_|_\
+      </strong>
+    </pre>
+    <span id="prompt">> NUMBER OF CODES:</span>
+    <input type="number" id="codeCount" placeholder="Enter number of codes" />
+    <div id="output"></div>
+    <div id="status" class="status-text">
+      <span style="color:green;">GREEN</span> = VALID
+      <span style="color:red;">RED</span> = INVALID
+    </div>
+    <div id="warning" class="status-text">
+      <span style="color:yellow;">WARNING: Inputting too many codes at once can cause a crash.</span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("codeCount").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        const codeCount = document.getElementById("codeCount").value;
+        if (parseInt(codeCount) > 1000) {
+          alert("LIMIT EXCEEDED");
+        } else {
+          generateCodes();
+        }
+      }
+    });
+
+    function generateCodes() {
+      const codeCount = document.getElementById("codeCount").value;
+      const outputDiv = document.getElementById("output");
+      outputDiv.innerHTML = '';
+
+      for (let i = 0; i < codeCount; i++) {
+        const code = generateRandomCode();
+        validateCode(code);
+      }
+    }
+
+    function generateRandomCode() {
+      const characters = 'Q29kZSBCeSBKdW5haS4';
+      let code = '';
+      for (let i = 0; i < 16; i++) {
+        code += characters.charAt(Math.floor(Math.random() * characters.length));
+        if ((i + 1) % 4 === 0 && i < 15) {
+          code += '-';
+        }
+      }
+      return code;
+    }
+
+    function validateCode(code) {
+      const url = `https://www.epicgames.com/fortnite/ajax/redemption/validate-redemption-code?redeem-code=${code}`;
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          const outputDiv = document.getElementById("output");
+          if (data.success) {
+            outputDiv.innerHTML += `<span style="color:green;">${code}</span>\n`;
+          } else {
+            outputDiv.innerHTML += `<span style="color:red;">${code}</span>\n`;
+          }
+        })
+        .catch(() => {
+          const outputDiv = document.getElementById("output");
+          outputDiv.innerHTML += `<span style="color:red;">${code}</span>\n`;
+        });
+    }
+  </script>
+</body>
+</html>
